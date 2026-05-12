@@ -20,22 +20,39 @@ A proposta do projeto é evoluir além de uma simples “lista de tarefas”, bu
 - Spring Web
 - Spring Data JPA
 - H2 Database
+- Hibernate
+- Lombok
+- Springdoc OpenAPI (Swagger)
 
 ## Funcionalidades atuais
 
 - Inicialização da aplicação Spring Boot
-- Endpoint REST `/tasks`
-- Estrutura inicial do backend organizada
+- Integração com banco H2 em memória
+- Configuração do Spring Data JPA
+- Criação das entidades:
+  - Status
+  - Categoria
+  - Usuario
+  - Task
+- Relacionamentos entre entidades utilizando `@ManyToOne`
+- Criação de repositories com `CrudRepository`
+- Endpoints REST:
+  - `/tasks`
+  - `/usuarios`
+- Integração com Swagger/OpenAPI
+- Estrutura backend organizada em camadas
 - Integração com GitHub
 
-## Próximos passos
+- ## Próximos passos
 
-- CRUD completo de tarefas
-- Integração com banco de dados
+- Corrigir endpoints `/categorias` e `/status`
+- Corrigir reconhecimento completo dos repositories pelo Spring
+- Implementar operações POST, PUT e DELETE
+- Cadastro de dados no banco
 - Validação de dados
 - Tratamento global de exceções
-- Documentação com Swagger
-- Sistema de usuários e autenticação
+- Melhorar documentação da API
+- Sistema de autenticação e usuários
 
 ## Autores
 
