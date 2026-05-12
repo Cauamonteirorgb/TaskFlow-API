@@ -1,0 +1,12 @@
+package com.caua.joao.taskflowapi;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class TaskFlowApiApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(TaskFlowApiApplication.class, args);
+	}
+
+}
