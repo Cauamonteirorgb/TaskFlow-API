@@ -1,18 +1,21 @@
 package com.caua.joao.taskflowapi.controller;
 
+import com.caua.joao.taskflowapi.entity.Task;
+import com.caua.joao.taskflowapi.repository.TaskRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TaskController {
 
-    @GetMapping("/")
-    public String home() {
-        return "TaskFlow API está funcionando!";
+    private final TaskRepository taskRepository;
+
+    public TaskController(TaskRepository taskRepository) {
+        this.taskRepository = taskRepository;
     }
 
     @GetMapping("/tasks")
-    public String listarTasks() {
-        return "API funcionando!";
+    public Iterable<Task> listarTasks() {
+        return taskRepository.findAll();
     }
 }
