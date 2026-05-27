@@ -1,6 +1,8 @@
 package com.caua.joao.taskflowapi.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,9 +18,12 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Título obrigatório")
+    @Size(min = 3, max = 200)
     @Column(nullable = false, length = 200)
     private String titulo;
 
+    @Size(max = 500)
     @Column(length = 500)
     private String descricao;
 
