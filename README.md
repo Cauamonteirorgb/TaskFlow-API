@@ -2,15 +2,24 @@
 
 TaskFlow API é uma API REST desenvolvida com Java e Spring Boot com foco em gerenciamento de tarefas para pequenos times e projetos.
 
-A proposta do projeto é evoluir além de uma simples “lista de tarefas”, buscando simular um backend mais próximo de aplicações reais utilizadas por equipes no dia a dia, incluindo organização de tarefas, estrutura escalável e boas práticas de desenvolvimento backend.
+A ideia do projeto é ir além de uma simples “to-do list”, buscando simular um backend mais próximo de aplicações reais utilizadas no mercado, com organização em camadas, validações, documentação, testes automatizados e boas práticas de desenvolvimento backend.
+
+O projeto está sendo desenvolvido como parte da disciplina de ADS, mas também com foco em aprendizado prático, construção de portfólio e preparação para estágio na área de desenvolvimento backend.
+
+---
 
 ## Objetivos do projeto
 
 - Praticar desenvolvimento backend com Java e Spring Boot
 - Evoluir conhecimentos em APIs REST
-- Aplicar organização em camadas (controller, service, repository e entity)
-- Trabalhar com versionamento utilizando Git e GitHub
-- Construir um projeto sólido para portfólio e preparação para estágio
+- Aplicar arquitetura em camadas
+- Trabalhar com persistência de dados utilizando JPA/Hibernate
+- Implementar validações e tratamento de exceções
+- Aprender testes automatizados no ecossistema Spring
+- Utilizar Git e GitHub em um fluxo de desenvolvimento real
+- Construir um projeto sólido para portfólio e evolução profissional
+
+---
 
 ## Tecnologias utilizadas
 
@@ -19,42 +28,25 @@ A proposta do projeto é evoluir além de uma simples “lista de tarefas”, bu
 - Maven
 - Spring Web
 - Spring Data JPA
-- H2 Database
 - Hibernate
+- H2 Database
 - Lombok
+- Bean Validation
 - Springdoc OpenAPI (Swagger)
+- JUnit 5
+- Mockito
+- JaCoCo
 
-## Funcionalidades atuais
+---
 
-- Inicialização da aplicação Spring Boot
-- Integração com banco H2 em memória
-- Configuração do Spring Data JPA
-- Criação das entidades:
-  - Status
-  - Categoria
-  - Usuario
-  - Task
-- Relacionamentos entre entidades utilizando `@ManyToOne`
-- Criação de repositories com `CrudRepository`
-- Endpoints REST:
-  - `/tasks`
-  - `/usuarios`
-- Integração com Swagger/OpenAPI
-- Estrutura backend organizada em camadas
-- Integração com GitHub
+## Estrutura do projeto
 
-- ## Próximos passos
+O projeto segue uma organização em camadas para separar responsabilidades e facilitar manutenção, escalabilidade e testes.
 
-- Corrigir endpoints `/categorias` e `/status`
-- Corrigir reconhecimento completo dos repositories pelo Spring
-- Implementar operações POST, PUT e DELETE
-- Cadastro de dados no banco
-- Validação de dados
-- Tratamento global de exceções
-- Melhorar documentação da API
-- Sistema de autenticação e usuários
-
-## Autores
-
-- Cauã Monteiro
-- João 
+```txt
+controller  -> endpoints da API
+service     -> regras de negócio
+repository  -> acesso ao banco de dados
+entity      -> entidades JPA
+dto         -> transferência de dados
+exception   -> tratamento global de erros
