@@ -3,49 +3,97 @@ package com.caua.joao.taskflowapi.service;
 import com.caua.joao.taskflowapi.entity.Status;
 import com.caua.joao.taskflowapi.exception.ResourceNotFoundException;
 import com.caua.joao.taskflowapi.repository.StatusRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@Service
-@RequiredArgsConstructor
-public class StatusService {
+import java.util.List;
+import java.util.Optional;
 
-    private final StatusRepository repository;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-    @Transactional(readOnly = true)
-    public Iterable<Status> listarTodos() {
-        return repository.findAll();
+@ExtendWith(MockitoExtension.class)
+class StatusServiceTest {
+
+    @Mock
+    StatusRepository repository;
+
+    @InjectMocks
+    StatusService service;
+
+    @Test
+    void deveListarTodosOsStatus() {
+        Status s1 = new Status(); s1.setNome("Pendente");
+        Status s2 = new Status(); s2.setNome("Concluído");
+        when(repository.findAll()).thenReturn(List.of(s1, s2));
+
+        Iterable<Status> resultado = service.listarTodos();
+
+        assertNotNull(resultado);
+        verify(repository, times(1)).findAll();
     }
 
-    @Transactional(readOnly = true)
-    public Status buscarPorId(Long id) {
+    @Test
+    void deveBuscarStatusPorId() {
+        Status status = new Status();
+        status.setId(1L);
+        status.setNome("Em andamento");
+        when(repository.findById(1L)).thenReturn(Optional.of(status));
 
-        return repository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Status", id));
+        Status resultado = service.buscarPorId(1L);
+
+        assertEquals("Em andamento", resultado.getNome());
     }
 
-    @Transactional
-    public Status salvar(Status status) {
-        return repository.save(status);
+    @Test
+    void deveLancarExcecaoQuandoIdNaoExiste() {
+        when(repository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            service.buscarPorId(99L);
+        });
     }
 
-    @Transactional
-    public Status atualizar(Long id, Status dados) {
+    @Test
+    void deveSalvarStatus() {
+        Status status = new Status();
+        status.setNome("Bloqueado");
+        when(repository.save(status)).thenReturn(status);
 
-        Status status = buscarPorId(id);
+        Status salvo = service.salvar(status);
 
-        status.setNome(dados.getNome());
-
-        return repository.save(status);
+        assertEquals("Bloqueado", salvo.getNome());
+        verify(repository, times(1)).save(status);
     }
 
-    @Transactional
-    public void deletar(Long id) {
+    @Test
+    void deveAtualizarStatus() {
+        Status existente = new Status();
+        existente.setId(1L);
+        existente.setNome("Nome antigo");
 
-        Status status = buscarPorId(id);
+        Status dados = new Status();
+        dados.setNome("Nome novo");
 
-        repository.delete(status);
+        when(repository.findById(1L)).thenReturn(Optional.of(existente));
+        when(repository.save(any())).thenReturn(existente);
+
+        Status atualizado = service.atualizar(1L, dados);
+
+        assertEquals("Nome novo", atualizado.getNome());
+    }
+
+    @Test
+    void deveDeletarStatus() {
+        Status status = new Status();
+        status.setId(1L);
+        when(repository.findById(1L)).thenReturn(Optional.of(status));
+
+        service.deletar(1L);
+
+        verify(repository, times(1)).delete(status);
     }
 }
