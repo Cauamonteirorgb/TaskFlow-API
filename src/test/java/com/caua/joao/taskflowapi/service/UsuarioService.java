@@ -3,50 +3,103 @@ package com.caua.joao.taskflowapi.service;
 import com.caua.joao.taskflowapi.entity.Usuario;
 import com.caua.joao.taskflowapi.exception.ResourceNotFoundException;
 import com.caua.joao.taskflowapi.repository.UsuarioRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@Service
-@RequiredArgsConstructor
-public class UsuarioService {
+import java.util.List;
+import java.util.Optional;
 
-    private final UsuarioRepository repository;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-    @Transactional(readOnly = true)
-    public Iterable<Usuario> listarTodos() {
-        return repository.findAll();
+@ExtendWith(MockitoExtension.class)
+class UsuarioServiceTest {
+
+    @Mock
+    UsuarioRepository repository;
+
+    @InjectMocks
+    UsuarioService service;
+
+    @Test
+    void deveListarTodosOsUsuarios() {
+        Usuario u1 = new Usuario(); u1.setNome("João");
+        Usuario u2 = new Usuario(); u2.setNome("Maria");
+        when(repository.findAll()).thenReturn(List.of(u1, u2));
+
+        Iterable<Usuario> resultado = service.listarTodos();
+
+        assertNotNull(resultado);
+        verify(repository, times(1)).findAll();
     }
 
-    @Transactional(readOnly = true)
-    public Usuario buscarPorId(Long id) {
+    @Test
+    void deveBuscarUsuarioPorId() {
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        usuario.setNome("João");
+        usuario.setEmail("joao@email.com");
+        when(repository.findById(1L)).thenReturn(Optional.of(usuario));
 
-        return repository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Usuário", id));
+        Usuario resultado = service.buscarPorId(1L);
+
+        assertEquals("João", resultado.getNome());
+        assertEquals("joao@email.com", resultado.getEmail());
     }
 
-    @Transactional
-    public Usuario salvar(Usuario usuario) {
-        return repository.save(usuario);
+    @Test
+    void deveLancarExcecaoQuandoIdNaoExiste() {
+        when(repository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            service.buscarPorId(99L);
+        });
     }
 
-    @Transactional
-    public Usuario atualizar(Long id, Usuario dados) {
+    @Test
+    void deveSalvarUsuario() {
+        Usuario usuario = new Usuario();
+        usuario.setNome("Carlos");
+        usuario.setEmail("carlos@email.com");
+        when(repository.save(usuario)).thenReturn(usuario);
 
-        Usuario usuario = buscarPorId(id);
+        Usuario salvo = service.salvar(usuario);
 
-        usuario.setNome(dados.getNome());
-        usuario.setEmail(dados.getEmail());
-
-        return repository.save(usuario);
+        assertEquals("Carlos", salvo.getNome());
+        verify(repository, times(1)).save(usuario);
     }
 
-    @Transactional
-    public void deletar(Long id) {
+    @Test
+    void deveAtualizarUsuario() {
+        Usuario existente = new Usuario();
+        existente.setId(1L);
+        existente.setNome("Nome antigo");
+        existente.setEmail("antigo@email.com");
 
-        Usuario usuario = buscarPorId(id);
+        Usuario dados = new Usuario();
+        dados.setNome("Nome novo");
+        dados.setEmail("novo@email.com");
 
-        repository.delete(usuario);
+        when(repository.findById(1L)).thenReturn(Optional.of(existente));
+        when(repository.save(any())).thenReturn(existente);
+
+        Usuario atualizado = service.atualizar(1L, dados);
+
+        assertEquals("Nome novo", atualizado.getNome());
+        assertEquals("novo@email.com", atualizado.getEmail());
+    }
+
+    @Test
+    void deveDeletarUsuario() {
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+        when(repository.findById(1L)).thenReturn(Optional.of(usuario));
+
+        service.deletar(1L);
+
+        verify(repository, times(1)).delete(usuario);
     }
 }
